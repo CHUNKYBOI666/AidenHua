@@ -24,7 +24,7 @@ export default function ContributionGraph() {
   const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
 
   return (
-    <div className="border border-gray-200 rounded-lg p-6 bg-white overflow-x-auto">
+    <div className="border border-gray-200 p-6 bg-white overflow-x-auto">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-sm font-medium text-gray-900">194 contributions in the last year</h3>
         <div className="text-xs text-gray-500 hover:text-blue-600 cursor-pointer">
@@ -49,7 +49,7 @@ export default function ContributionGraph() {
                 {week.map((day, j) => (
                   <div
                     key={j}
-                    className={`w-3 h-3 rounded-sm ${getColor(day)} transition-colors hover:ring-1 hover:ring-gray-300`}
+                    className={`w-3 h-3 ${getColor(day)} transition-colors hover:ring-1 hover:ring-gray-300`}
                     title={`${day} contributions`}
                   />
                 ))}
@@ -63,11 +63,11 @@ export default function ContributionGraph() {
         <a href="#" className="hover:text-blue-600">Learn how we count contributions</a>
         <div className="flex items-center gap-1">
           <span>Less</span>
-          <div className="w-2.5 h-2.5 rounded-sm bg-gray-100" />
-          <div className="w-2.5 h-2.5 rounded-sm bg-green-100" />
-          <div className="w-2.5 h-2.5 rounded-sm bg-green-300" />
-          <div className="w-2.5 h-2.5 rounded-sm bg-green-500" />
-          <div className="w-2.5 h-2.5 rounded-sm bg-green-700" />
+          <div className="w-2.5 h-2.5 bg-gray-100" />
+          <div className="w-2.5 h-2.5 bg-green-100" />
+          <div className="w-2.5 h-2.5 bg-green-300" />
+          <div className="w-2.5 h-2.5 bg-green-500" />
+          <div className="w-2.5 h-2.5 bg-green-700" />
           <span>More</span>
         </div>
       </div>

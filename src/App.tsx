@@ -19,10 +19,10 @@ export default function App() {
         {/* Header Spacer (GitHub-like top bar placeholder) */}
         <header className="h-16 bg-[#010409] w-full flex items-center px-4 md:px-8">
           <div className="flex items-center gap-4">
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+            <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
               <span className="text-white text-lg font-bold">A</span>
             </div>
-            <div className="hidden md:flex items-center gap-2 bg-white/5 border border-white/10 rounded-md px-3 py-1 text-sm text-white/50 w-64">
+            <div className="hidden md:flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1 text-sm text-white/50 w-64">
               <span>Type / to search</span>
             </div>
           </div>

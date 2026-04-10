@@ -12,8 +12,8 @@ export default function Experiences() {
       <h2 className="text-xl font-semibold text-gray-900 mb-4">Work Experience</h2>
       
       {EXPERIENCES.map((exp) => (
-        <div key={exp.id} className="border border-gray-200 rounded-lg p-6 bg-white flex gap-6">
-          <div className="w-12 h-12 rounded-md bg-gray-100 flex-shrink-0 flex items-center justify-center text-xl">
+        <div key={exp.id} className="border border-gray-200 p-6 bg-white flex gap-6">
+          <div className="w-12 h-12 bg-gray-100 flex-shrink-0 flex items-center justify-center text-xl">
             🏢
           </div>
           <div className="flex-grow">

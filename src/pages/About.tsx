@@ -8,7 +8,7 @@ export default function About() {
       transition={{ duration: 0.3 }}
       className="prose prose-sm max-w-none text-gray-700"
     >
-      <div className="border border-gray-200 rounded-lg p-8 bg-white">
+      <div className="border border-gray-200 p-8 bg-white">
         <h2 className="text-2xl font-semibold text-gray-900 mb-6">About Me</h2>
         
         <div className="space-y-4">
@@ -25,7 +25,7 @@ export default function About() {
           <h3 className="text-lg font-medium text-gray-900 mt-8">Technical Skills</h3>
           <div className="flex flex-wrap gap-2 mt-2">
             {['Python', 'TypeScript', 'React', 'Node.js', 'PostgreSQL', 'Docker', 'AWS', 'PyTorch'].map(skill => (
-              <span key={skill} className="px-3 py-1 bg-gray-100 border border-gray-200 rounded-full text-xs font-medium text-gray-700">
+              <span key={skill} className="px-3 py-1 bg-gray-100 border border-gray-200 text-xs font-medium text-gray-700">
                 {skill}
               </span>
             ))}

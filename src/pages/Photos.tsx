@@ -22,7 +22,7 @@ export default function Photos() {
           <motion.div
             key={photo.id}
             whileHover={{ scale: 1.02 }}
-            className="group relative aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-100"
+            className="group relative aspect-square overflow-hidden border border-gray-200 bg-gray-100"
           >
             <img
               src={photo.url}
