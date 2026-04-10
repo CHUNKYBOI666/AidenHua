@@ -1,66 +1,106 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import Navigation from './components/Navigation';
-import Overview from './pages/Overview';
-import About from './pages/About';
-import Experiences from './pages/Experiences';
-import Photos from './pages/Photos';
-import ProjectDetail from './pages/ProjectDetail';
+import { motion } from "motion/react";
+import { Mail, Linkedin, Github, FileText, ArrowLeft, ArrowRight } from "lucide-react";
 
 export default function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-white text-gray-900 font-sans selection:bg-orange-100 selection:text-orange-900">
-        {/* Header Spacer (GitHub-like top bar placeholder) */}
-        <header className="h-16 bg-[#010409] w-full flex items-center px-4 md:px-8">
-          <div className="flex items-center gap-4">
-            <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
-              <span className="text-white text-lg font-bold">A</span>
-            </div>
-            <div className="hidden md:flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1 text-sm text-white/50 w-64">
-              <span>Type / to search</span>
-            </div>
+    <div className="min-h-screen bg-white text-[#1a1a1a] selection:bg-black selection:text-white">
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="max-w-[900px] mx-auto px-6 py-12 md:py-20"
+      >
+        {/* Header / Breadcrumb */}
+        <header className="mb-3 flex items-center justify-between">
+          <nav className="text-[11px] font-medium text-[#666666] tracking-tight">
+            <span className="hover:text-black cursor-pointer transition-colors">home</span>
+            <span className="mx-2">/</span>
+          </nav>
+          <div className="flex items-center gap-5 text-[#666666]">
+            <a href="#" className="hover:text-black transition-colors">
+              <Mail size={16} />
+            </a>
+            <a href="#" className="hover:text-black transition-colors">
+              <Linkedin size={16} />
+            </a>
+            <a href="#" className="hover:text-black transition-colors">
+              <Github size={16} />
+            </a>
           </div>
         </header>
 
-        <main className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row gap-8">
-            {/* Sidebar */}
-            <Sidebar />
+        <hr className="border-[#eeeeee] mb-10" />
 
-            {/* Main Content Area */}
-            <div className="flex-grow min-w-0">
-              <Navigation />
-              
-              <div className="mt-4">
-                <Routes>
-                  <Route path="/" element={<Overview />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/experiences" element={<Experiences />} />
-                  <Route path="/photos" element={<Photos />} />
-                  <Route path="/project/:id" element={<ProjectDetail />} />
-                </Routes>
-              </div>
+        {/* Intro Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-14">
+          <div className="space-y-6">
+            <h1 className="text-lg font-bold tracking-tight text-black uppercase">
+              Aiden Hua
+            </h1>
+
+            <div className="space-y-1 text-xs text-[#444444]">
+              <a 
+                href="#" 
+                className="block hover:text-black underline underline-offset-4 decoration-[#eeeeee] hover:decoration-black transition-all"
+              >
+                CS | McGill University
+              </a>
+            </div>
+
+            <div className="space-y-5 text-[13px] text-[#444444] leading-relaxed max-w-md font-normal">
+              <p>
+                I'm a student who is passionate about designing and building systems that create meaningful impact. I am currently seeking <span className="italic">summer 2026</span> (May-August) internships.
+              </p>
+              <p>
+                In my leisure time, I pursue strategic and creative interests including chess, drawing, photography, and volleyball. I'm committed to continuous learning, collaborative problem-solving, and building professional relationships.
+              </p>
             </div>
           </div>
-        </main>
 
-        <footer className="max-w-7xl mx-auto px-4 py-10 mt-20 border-t border-gray-200 text-xs text-gray-500 flex flex-wrap gap-x-8 gap-y-4 justify-center md:justify-start">
-          <span>© 2026 Aiden Hua</span>
-          <a href="#" className="hover:text-blue-600 hover:underline">Terms</a>
-          <a href="#" className="hover:text-blue-600 hover:underline">Privacy</a>
-          <a href="#" className="hover:text-blue-600 hover:underline">Security</a>
-          <a href="#" className="hover:text-blue-600 hover:underline">Status</a>
-          <a href="#" className="hover:text-blue-600 hover:underline">Docs</a>
-          <a href="#" className="hover:text-blue-600 hover:underline">Contact</a>
-        </footer>
-      </div>
-    </Router>
+          <div className="relative aspect-[4/3] md:aspect-square overflow-hidden rounded-[2px]">
+            <img 
+              src="https://picsum.photos/seed/mountain-hiker/800/800?grayscale" 
+              alt="Aiden Hua"
+              className="object-cover w-full h-full opacity-95 hover:opacity-100 transition-opacity duration-500"
+              referrerPolicy="no-referrer"
+            />
+          </div>
+        </div>
+
+        <hr className="border-[#eeeeee] mb-10" />
+
+        {/* My Work Section */}
+        <section className="mb-16">
+          <h2 className="text-[10px] font-bold tracking-[0.25em] text-black uppercase mb-6 opacity-60">
+            My Work
+          </h2>
+
+          <div className="space-y-6">
+            <div className="group">
+              <a href="#" className="inline-block text-base hover:text-black underline underline-offset-4 decoration-[#eeeeee] hover:decoration-black transition-all mb-0.5">
+                projects
+              </a>
+              <p className="text-[#888888] italic text-[11px]">built end-to-end through code</p>
+            </div>
+
+            <div className="group">
+              <a href="#" className="inline-block text-base hover:text-black underline underline-offset-4 decoration-[#eeeeee] hover:decoration-black transition-all mb-0.5">
+                sketches
+              </a>
+              <p className="text-[#888888] italic text-[11px]">(coming soon!) drawn in one take with a ball-point pen</p>
+            </div>
+
+            <div className="group">
+              <a href="#" className="inline-block text-base hover:text-black underline underline-offset-4 decoration-[#eeeeee] hover:decoration-black transition-all mb-0.5">
+                photos
+              </a>
+              <p className="text-[#888888] italic text-[11px]">captured from moments noticed</p>
+            </div>
+          </div>
+        </section>
+
+        <hr className="border-[#eeeeee] mb-6" />
+      </motion.div>
+    </div>
   );
 }
-
