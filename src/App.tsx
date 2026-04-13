@@ -5,7 +5,7 @@ import { useRef } from "react";
 const projects = [
   {
     id: "01",
-    title: "Distributed Task Scheduler",
+    title: "RAG for Epstein File",
     category: "Systems · Backend",
     year: "2025",
     description:
@@ -16,7 +16,7 @@ const projects = [
   },
   {
     id: "02",
-    title: "Chord — Study Planner",
+    title: "Baconhead",
     category: "Full-Stack · Web",
     year: "2024",
     description:
@@ -27,7 +27,7 @@ const projects = [
   },
   {
     id: "03",
-    title: "Lens — Photo Portfolio CMS",
+    title: "EasyFinder",
     category: "Creative Tool · Web",
     year: "2024",
     description:
@@ -209,9 +209,6 @@ export default function App() {
               {projects.length} total
             </span>
           </div>
-          <p className="text-[11px] text-[#aaaaaa] italic mb-8">
-            built end-to-end through code
-          </p>
 
           <hr className="border-[#eeeeee]" />
 
