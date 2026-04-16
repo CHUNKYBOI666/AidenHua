@@ -201,7 +201,7 @@ export default function App() {
         <hr className="border-[#eeeeee] mb-10" />
 
         {/* Intro Section */}
-        <div className="flex flex-col mb-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-14">
           <div className="space-y-6 max-w-xl">
             <h1 className="text-lg font-bold tracking-tight text-black uppercase">
               Aiden Hua
@@ -216,6 +216,25 @@ export default function App() {
                 how to build RAG end to end, and also finetuning models.
               </p>
             </div>
+          </div>
+
+          {/* Contribution Graph */}
+          <div className="w-full overflow-hidden flex justify-end items-center">
+            <a
+              href="https://github.com/CHUNKYBOI666"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-max"
+              aria-label="View GitHub Contributions"
+            >
+              <img
+                src="https://ghchart.rshah.org/1a1a1a/CHUNKYBOI666"
+                alt="Aiden Hua's GitHub Contribution Graph"
+                className="w-[800px] max-w-none opacity-80 hover:opacity-100 transition-opacity duration-300 -ml-[404px]"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
           </div>
         </div>
 
@@ -240,30 +259,6 @@ export default function App() {
                 <ProjectRow project={project} index={i} />
               </Fragment>
             ))}
-          </div>
-        </section>
-
-        {/* Contribution Graph */}
-        <section className="mb-16">
-          <h2 className="text-[10px] font-bold tracking-[0.25em] text-black uppercase mb-6 opacity-60">
-            Activity
-          </h2>
-          <div className="w-full overflow-x-auto pb-2">
-            <a
-              href="https://github.com/CHUNKYBOI666"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block min-w-[700px] md:min-w-full"
-              aria-label="View GitHub Contributions"
-            >
-              <img
-                src="https://ghchart.rshah.org/1a1a1a/CHUNKYBOI666"
-                alt="Aiden Hua's GitHub Contribution Graph"
-                className="w-full h-auto opacity-80 hover:opacity-100 transition-opacity duration-300"
-                loading="lazy"
-                decoding="async"
-              />
-            </a>
           </div>
         </section>
 
