@@ -485,9 +485,8 @@ export function SnakeCalendar({
         e.stopPropagation();
       }}
     >
-      <div className="pointer-events-none absolute left-0 top-0 z-10 flex max-w-[min(100%,240px)] gap-2 px-1 py-0.5 text-[9px] font-medium tracking-wide text-[#666666]">
+      <div className="pointer-events-none absolute left-0 top-0 z-10 px-1 py-0.5 text-[9px] font-medium tracking-wide text-[#666666]">
         <span>Score {score}</span>
-        <span className="opacity-70">Focus & use WASD / arrows</span>
       </div>
 
       <ActivityCalendar
