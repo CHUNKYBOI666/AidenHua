@@ -15,7 +15,7 @@ const projects = [
     year: "2025",
     description:
       "RAG for 20k+ document corpus of the Epstein File. Include Q&A with Citations, entity search function, and relationship Graphs between entities. Allows open any cited document to see full DOJ text files.",
-    tech: ["Go", "Redis", "gRPC", "Docker"],
+    tech: ["FastAPI", "React", "Supabase", "Vite"],
     thumbnail: epsteinProjectMedia,
     media: "video" as const,
     link: "https://github.com/CHUNKYBOI666/RAGforEpsteinFiles",
@@ -27,7 +27,7 @@ const projects = [
     year: "2024",
     description:
       "Explores vision model which trains a bot that watches gameplay, learn game states and takes over to play the game. Tests and ran on simple roblox obbies.",
-    tech: ["React", "Python", "FastAPI", "PostgreSQL"],
+    tech: ["PyTorch", "ViT", "DPO", "Roblox"],
     thumbnail: baconheadThumbnail,
     media: "image" as const,
     link: "https://github.com/ibrahimansr/baconhead",
@@ -38,8 +38,8 @@ const projects = [
     category: "Creative Tool · Web",
     year: "2024",
     description:
-      "Semantic file search for macOS via Raycast. Describe what you're looking for in plain English and EasyFinder returns the most relevant images, PDFs, Office docs, and Markdown files from your machine. Uses Gemini's Multimodel Embedding 2 model.",
-    tech: ["Next.js", "TypeScript", "Cloudflare", "Supabase"],
+      "Semantic file search for macOS via Raycast. Describe what you're looking for in plain English and EasyFinder returns the most relevant images, PDFs, Office docs, and Markdown files from your machine. Multimodal embeddings and LanceDB-backed vector search.",
+    tech: ["Raycast", "FastAPI", "LanceDB", "LaunchAgents"],
     thumbnail: easyFinderThumbnail,
     media: "image" as const,
     link: "https://github.com/CHUNKYBOI666/EasyFinder",
