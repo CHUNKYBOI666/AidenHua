@@ -481,7 +481,6 @@ export function SnakeCalendar({
       onKeyDown={onKeyDown}
       onPointerDown={() => containerRef.current?.focus()}
       onClick={(e) => {
-        e.preventDefault();
         e.stopPropagation();
       }}
     >

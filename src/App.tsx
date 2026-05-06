@@ -65,11 +65,11 @@ function ProjectRow({
     >
       <div className="group grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-6 py-8">
         {/* Thumbnail */}
-        <div className="relative overflow-hidden rounded-[2px] aspect-[16/11] bg-[#f5f5f5]">
+        <div className="relative overflow-hidden rounded-[2px] aspect-16/11 bg-[#f5f5f5]">
           {project.media === "video" ? (
             <video
               src={project.thumbnail}
-              className="absolute inset-0 z-[1] size-full object-cover opacity-90 transition-all duration-500 group-hover:opacity-100 group-hover:scale-[1.03]"
+              className="absolute inset-0 z-1 size-full object-cover opacity-90 transition-all duration-500 group-hover:opacity-100 group-hover:scale-[1.03]"
               muted
               loop
               playsInline
@@ -80,13 +80,13 @@ function ProjectRow({
             <img
               src={project.thumbnail}
               alt={project.title}
-              className="absolute inset-0 z-[1] size-full object-cover opacity-90 transition-all duration-500 group-hover:opacity-100 group-hover:scale-[1.03]"
+              className="absolute inset-0 z-1 size-full object-cover opacity-90 transition-all duration-500 group-hover:opacity-100 group-hover:scale-[1.03]"
               loading="eager"
               decoding="async"
             />
           )}
           <div
-            className="pointer-events-none absolute inset-0 z-[2] bg-black/0 transition-colors duration-300 group-hover:bg-black/5"
+            className="pointer-events-none absolute inset-0 z-2 bg-black/0 transition-colors duration-300 group-hover:bg-black/5"
             aria-hidden
           />
         </div>
@@ -96,7 +96,7 @@ function ProjectRow({
           <div className="space-y-3">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <span className="text-[10px] font-medium tracking-[0.2em] text-[#aaaaaa] uppercase">
+                <span className="text-[10px] font-medium tracking-[0.2em] text-[#777777] uppercase">
                   {project.id}
                 </span>
                 <h3 className="mt-1 text-[15px] font-bold tracking-tight text-black leading-tight">
@@ -107,7 +107,7 @@ function ProjectRow({
                 href={project.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-shrink-0 mt-1 text-[#cccccc] hover:text-black transition-colors duration-200"
+                className="shrink-0 mt-1 text-[#888888] hover:text-black transition-colors duration-200"
                 aria-label={`View ${project.title} on GitHub`}
               >
                 <ArrowUpRight size={15} />
