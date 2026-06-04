@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/react";
 import { motion, useInView } from "motion/react";
 import { Mail, Linkedin, Github, ArrowUpRight } from "lucide-react";
 import { Fragment, useRef, useState } from "react";
@@ -238,30 +239,6 @@ export default function App() {
                 华一诺
               </motion.span>
             </motion.h1>
-
-            <div className="space-y-5 text-[13px] text-[#444444] leading-relaxed font-normal">
-              <p>
-                Studying CS @
-                <a
-                  href="https://www.mcgill.ca"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="relative inline-block font-bold no-underline after:content-[''] after:absolute after:left-0 after:bottom-px after:h-[1.5px] after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100"
-                >
-                  McGill
-                </a>
-                , Incoming Video Design Engineer{" "}
-                <span className="group relative inline-block font-bold">
-                  @Evertz
-                  <span className="pointer-events-none absolute left-0 bottom-px h-[1.5px] w-full origin-left scale-x-0 bg-current transition-transform duration-300 ease-out group-hover:scale-x-100" />
-                </span>
-                .
-              </p>
-              <p className="mt-4">
-                Recently made baconhead and Rag for Epstein File. Tryna learn
-                how to build RAG end to end, and also finetuning models.
-              </p>
-            </div>
           </div>
 
           {/* Contribution Graph */}
@@ -316,31 +293,9 @@ export default function App() {
             ))}
           </div>
         </section>
-
-        {/* Other Work */}
-        <section className="mb-16">
-          <h2 className="text-[10px] font-bold tracking-[0.25em] text-black uppercase mb-6 opacity-60">
-            Also
-          </h2>
-          <div className="space-y-6">
-            {[
-              { label: "photos", description: "captured from moments noticed" },
-            ].map(({ label, description }) => (
-              <div key={label}>
-                <a
-                  href="#"
-                  className="inline-block text-base hover:text-black underline underline-offset-4 decoration-[#eeeeee] hover:decoration-black transition-colors mb-0.5"
-                >
-                  {label}
-                </a>
-                <p className="text-[#888888] italic text-[11px]">{description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
         <hr className="border-[#eeeeee] mb-6" />
       </div>
+      <Analytics />
     </motion.div>
   );
 }
