@@ -239,6 +239,10 @@ export default function App() {
                 华一诺
               </motion.span>
             </motion.h1>
+            <div className="space-y-0.5 text-[13px] text-[#666666] leading-relaxed">
+              <p>cs @McGill</p>
+              <p>Engineering Intern @ Evertz</p>
+            </div>
           </div>
 
           {/* Contribution Graph */}
