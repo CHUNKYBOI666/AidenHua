@@ -216,8 +216,6 @@ export function SnakeCalendar({
   const [devouredDates, setDevouredDates] = useState<Set<string>>(
     () => new Set()
   );
-  const [score, setScore] = useState(0);
-
   const calendarData = useMemo(() => {
     if (!contributions?.length) return [];
     return contributions.map((a) => {
@@ -249,7 +247,6 @@ export function SnakeCalendar({
       setSnake([]);
       setFood(new Set());
       setDevouredDates(new Set());
-      setScore(0);
       return;
     }
 
@@ -293,7 +290,6 @@ export function SnakeCalendar({
     setSnake([{ col: startCol, row: startRow }]);
     setFood(initialFood);
     setDevouredDates(new Set());
-    setScore(0);
     directionRef.current = { dc: 1, dr: 0 };
     pendingDirRef.current = null;
   }, [gridMeta, contributions]);
@@ -372,7 +368,6 @@ export function SnakeCalendar({
       setSnake(newSnake);
       setFood(newFood);
       if (eating) {
-        setScore((s) => s + 1);
         if (clearedRound) {
           setDevouredDates(new Set());
         } else if (eatenDate) {
@@ -441,6 +436,7 @@ export function SnakeCalendar({
   if (waitingForFetch) {
     return (
       <ActivityCalendar
+        className="snake-calendar"
         data={[]}
         loading
         colorScheme="light"
@@ -484,11 +480,8 @@ export function SnakeCalendar({
         e.stopPropagation();
       }}
     >
-      <div className="pointer-events-none absolute left-0 top-0 z-10 px-1 py-0.5 text-[9px] font-medium tracking-wide text-[#666666]">
-        <span>Score {score}</span>
-      </div>
-
       <ActivityCalendar
+        className="snake-calendar"
         data={calendarData}
         loading={false}
         colorScheme="light"

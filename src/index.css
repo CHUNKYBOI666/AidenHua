@@ -22,3 +22,7 @@
     @apply transition-colors duration-200;
   }
 }
+
+.snake-calendar > .react-activity-calendar__scroll-container {
+  overflow: hidden !important;
+}

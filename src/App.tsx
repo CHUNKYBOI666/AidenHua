@@ -68,6 +68,28 @@ function useMediaQuery(query: string): boolean {
   );
 }
 
+function useIsScrolling(debounceMs = 150): boolean {
+  const [isScrolling, setIsScrolling] = useState(false);
+
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    const onScroll = () => {
+      setIsScrolling(true);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => setIsScrolling(false), debounceMs);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      clearTimeout(timeoutId);
+    };
+  }, [debounceMs]);
+
+  return isScrolling;
+}
+
 function ProjectPreviewOverlay({
   project,
   onClose,
@@ -252,6 +274,7 @@ const BACKGROUND_OPACITY = 0.09;
 
 export default function App() {
   const isMobile = useMediaQuery("(max-width: 767px)");
+  const isScrolling = useIsScrolling();
   const [previewProject, setPreviewProject] = useState<Project | null>(null);
 
   const handleOpenPreview = useCallback((p: Project) => {
@@ -329,10 +352,31 @@ export default function App() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-center mb-10 sm:mb-14">
           <div className="space-y-4 sm:space-y-6 max-w-xl">
             {isMobile ? (
-              <h1 className="text-lg font-medium tracking-tight text-gray-800">
-                <span className="block">Aiden Hua</span>
-                <span className="block text-black mt-0.5">华一诺</span>
-              </h1>
+              <motion.h1
+                className="relative text-lg font-medium tracking-tight text-gray-800 w-fit"
+                animate={isScrolling ? "hover" : "initial"}
+              >
+                <motion.span
+                  variants={{
+                    initial: { opacity: 1, y: 0, filter: "blur(0px)" },
+                    hover: { opacity: 0, y: -8, filter: "blur(4px)" },
+                  }}
+                  transition={{ duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
+                  className="inline-block"
+                >
+                  Aiden Hua
+                </motion.span>
+                <motion.span
+                  variants={{
+                    initial: { opacity: 0, y: 8, filter: "blur(4px)" },
+                    hover: { opacity: 1, y: 0, filter: "blur(0px)" },
+                  }}
+                  transition={{ duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
+                  className="absolute left-0 top-0 inline-block text-black"
+                >
+                  华一诺
+                </motion.span>
+              </motion.h1>
             ) : (
               <motion.h1
                 className="relative text-xl font-medium tracking-tight text-gray-800 cursor-default w-fit"
@@ -344,7 +388,7 @@ export default function App() {
                     initial: { opacity: 1, y: 0, filter: "blur(0px)" },
                     hover: { opacity: 0, y: -8, filter: "blur(4px)" },
                   }}
-                  transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+                  transition={{ duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
                   className="inline-block"
                 >
                   Aiden Hua
@@ -354,7 +398,7 @@ export default function App() {
                     initial: { opacity: 0, y: 8, filter: "blur(4px)" },
                     hover: { opacity: 1, y: 0, filter: "blur(0px)" },
                   }}
-                  transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+                  transition={{ duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
                   className="absolute left-0 top-0 inline-block text-black"
                 >
                   华一诺
