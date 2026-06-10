@@ -21,6 +21,33 @@ import {
 /** Slower cadence for comfortable play */
 const TICK_MS = 260;
 const LABEL_MARGIN = 8;
+const MAX_SNAKE_LENGTH = 5;
+/** Empty hold before color fade begins — lengthens overall regen */
+const REGEN_HOLD_MS = 4000;
+/** Color ramp timing (unchanged visual pace) */
+const COLOR_REGEN_BASE_MS = 2200;
+const COLOR_REGEN_PER_LEVEL_MS = 450;
+const REGEN_TICK_MS = 50;
+
+function colorRegenMs(level: number) {
+  return COLOR_REGEN_BASE_MS + level * COLOR_REGEN_PER_LEVEL_MS;
+}
+
+function totalRegenMs(level: number) {
+  return REGEN_HOLD_MS + colorRegenMs(level);
+}
+
+/** Smooth 0→1 curve so cells fade in instead of popping */
+function regenOpacity(progress: number) {
+  const t = Math.max(0, Math.min(1, progress));
+  return t * t * (3 - 2 * t);
+}
+
+type DevouredEntry = {
+  eatenAt: number;
+  key: string;
+  activity: Activity;
+};
 
 /** Very light yellow snake blocks (classic grid snake, not circles) */
 const SNAKE_FILL = "#fffbeb";
@@ -110,6 +137,8 @@ export type SnakeCalendarProps = {
   };
   /** Same contract as `GitHubCalendar`: receives raw API contributions, return shaped list. */
   transformData?: (contributions: Activity[]) => Activity[];
+  /** Shrink blocks to fit container width (use on narrow/mobile layouts). */
+  fitToWidth?: boolean;
 };
 
 export function SnakeCalendar({
@@ -126,6 +155,7 @@ export function SnakeCalendar({
     light: ["#eeeeee", "#767676", "#676767", "#4d4d4d", "#1a1a1a"],
   },
   transformData: transformFn,
+  fitToWidth = false,
 }: SnakeCalendarProps) {
   const weekStart: Day = 0;
 
@@ -149,15 +179,48 @@ export function SnakeCalendar({
     return groupByWeeks(contributions, weekStart);
   }, [contributions, weekStart]);
 
-  const labelHeight = showMonthLabels ? fontSize + LABEL_MARGIN : 0;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [fittedBlockSize, setFittedBlockSize] = useState(blockSize);
+
+  useEffect(() => {
+    setFittedBlockSize(blockSize);
+  }, [blockSize]);
+
+  useEffect(() => {
+    if (!fitToWidth) {
+      setFittedBlockSize(blockSize);
+      return;
+    }
+
+    const node = containerRef.current;
+    if (!node || !weeks?.length) return;
+
+    const fit = () => {
+      const available = node.clientWidth;
+      if (available <= 0) return;
+      const cols = weeks.length;
+      const fitted = Math.floor((available + blockMargin) / cols - blockMargin);
+      setFittedBlockSize(Math.max(4, Math.min(blockSize, fitted)));
+    };
+
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(node);
+    return () => ro.disconnect();
+  }, [weeks, blockSize, blockMargin, fitToWidth]);
+
+  const blockScale = fittedBlockSize / blockSize;
+  const fittedFontSize = Math.max(8, Math.round(fontSize * blockScale));
+  const labelHeight = showMonthLabels ? fittedFontSize + LABEL_MARGIN : 0;
 
   const dimensions = useMemo(() => {
     if (!weeks?.length) return null;
-    const width = weeks.length * (blockSize + blockMargin) - blockMargin;
+    const width =
+      weeks.length * (fittedBlockSize + blockMargin) - blockMargin;
     const height =
-      labelHeight + (blockSize + blockMargin) * 7 - blockMargin;
+      labelHeight + (fittedBlockSize + blockMargin) * 7 - blockMargin;
     return { width, height };
-  }, [weeks, blockSize, blockMargin, labelHeight]);
+  }, [weeks, fittedBlockSize, blockMargin, labelHeight]);
 
   const gridMeta = useMemo(() => {
     if (!weeks) return null;
@@ -208,23 +271,62 @@ export function SnakeCalendar({
 
   const directionRef = useRef<Dir>({ dc: 1, dr: 0 });
   const pendingDirRef = useRef<Dir | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const [snake, setSnake] = useState<{ col: number; row: number }[]>([]);
   const [food, setFood] = useState<Set<string>>(() => new Set());
-  /** Contribution cells eaten this round — calendar shows them as empty until respawn */
-  const [devouredDates, setDevouredDates] = useState<Set<string>>(
-    () => new Set()
+  /** Contribution cells eaten — regenerate gradually based on eat time and level */
+  const [devouredCells, setDevouredCells] = useState<Map<string, DevouredEntry>>(
+    () => new Map()
   );
+  const [regenTick, setRegenTick] = useState(0);
+
   const calendarData = useMemo(() => {
     if (!contributions?.length) return [];
+    const now = Date.now();
     return contributions.map((a) => {
-      if (devouredDates.has(a.date)) {
-        return { ...a, count: 0, level: 0 };
+      const entry = devouredCells.get(a.date);
+      if (!entry) return a;
+
+      if (now - entry.eatenAt >= totalRegenMs(entry.activity.level)) {
+        return entry.activity;
       }
-      return a;
+
+      return { ...entry.activity, level: 0, count: 0 };
     });
-  }, [contributions, devouredDates]);
+  }, [contributions, devouredCells, regenTick]);
+
+  const regeneratingOverlays = useMemo(() => {
+    const now = Date.now();
+    const palette = theme.light;
+    const overlays: {
+      key: string;
+      col: number;
+      row: number;
+      fill: string;
+      opacity: number;
+    }[] = [];
+
+    for (const entry of devouredCells.values()) {
+      const elapsed = now - entry.eatenAt;
+      const colorMs = colorRegenMs(entry.activity.level);
+      if (elapsed < REGEN_HOLD_MS || elapsed >= REGEN_HOLD_MS + colorMs) {
+        continue;
+      }
+
+      const colorProgress = (elapsed - REGEN_HOLD_MS) / colorMs;
+      const [col, row] = entry.key.split(",").map(Number);
+      const level = Math.min(entry.activity.level, palette.length - 1);
+      overlays.push({
+        key: entry.key,
+        col,
+        row,
+        fill: palette[level],
+        opacity: regenOpacity(colorProgress),
+      });
+    }
+
+    return overlays;
+  }, [devouredCells, regenTick, theme.light]);
 
   useEffect(() => {
     let cancelled = false;
@@ -246,7 +348,7 @@ export function SnakeCalendar({
     if (!gridMeta || !contributions?.length) {
       setSnake([]);
       setFood(new Set());
-      setDevouredDates(new Set());
+      setDevouredCells(new Map());
       return;
     }
 
@@ -289,19 +391,23 @@ export function SnakeCalendar({
 
     setSnake([{ col: startCol, row: startRow }]);
     setFood(initialFood);
-    setDevouredDates(new Set());
+    setDevouredCells(new Map());
     directionRef.current = { dc: 1, dr: 0 };
     pendingDirRef.current = null;
   }, [gridMeta, contributions]);
 
   const snakeRef = useRef(snake);
   const foodRef = useRef(food);
+  const devouredCellsRef = useRef(devouredCells);
   useEffect(() => {
     snakeRef.current = snake;
   }, [snake]);
   useEffect(() => {
     foodRef.current = food;
   }, [food]);
+  useEffect(() => {
+    devouredCellsRef.current = devouredCells;
+  }, [devouredCells]);
 
   useEffect(() => {
     if (!gridMeta) return;
@@ -335,28 +441,16 @@ export function SnakeCalendar({
       let newSnake: { col: number; row: number }[];
       if (eating) {
         newSnake = [nextPos, ...body];
+        if (newSnake.length > MAX_SNAKE_LENGTH) {
+          newSnake = newSnake.slice(0, MAX_SNAKE_LENGTH);
+        }
       } else {
         newSnake = [nextPos, ...body.slice(0, -1)];
       }
 
       let newFood = new Set(foodSet);
-      let clearedRound = false;
       if (eating) {
         newFood.delete(nextKey);
-        if (newFood.size === 0 && meta.allCommitKeys.size > 0) {
-          const occupied = new Set(
-            newSnake.map((s) => cellKey(s.col, s.row))
-          );
-          const replenish = new Set<string>();
-          for (const key of meta.allCommitKeys) {
-            if (!occupied.has(key)) replenish.add(key);
-          }
-          if (replenish.size === 0) {
-            for (const key of meta.allCommitKeys) replenish.add(key);
-          }
-          newFood = replenish;
-          clearedRound = true;
-        }
       }
 
       const eatenCell = meta.weeks[nextPos.col][nextPos.row];
@@ -367,18 +461,61 @@ export function SnakeCalendar({
       foodRef.current = newFood;
       setSnake(newSnake);
       setFood(newFood);
-      if (eating) {
-        if (clearedRound) {
-          setDevouredDates(new Set());
-        } else if (eatenDate) {
-          setDevouredDates((prev) => new Set(prev).add(eatenDate));
-        }
+      if (eating && eatenDate && eatenCell) {
+        setDevouredCells((prev) => {
+          const next = new Map(prev);
+          next.set(eatenDate, {
+            eatenAt: Date.now(),
+            key: nextKey,
+            activity: { ...eatenCell },
+          });
+          return next;
+        });
       }
     };
 
     const id = window.setInterval(tick, TICK_MS);
     return () => window.clearInterval(id);
   }, [gridMeta]);
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      const now = Date.now();
+      setRegenTick((t) => t + 1);
+
+      const prev = devouredCellsRef.current;
+      if (prev.size === 0) return;
+
+      const restoredKeys: string[] = [];
+      const next = new Map(prev);
+
+      for (const [date, entry] of prev) {
+        if (now - entry.eatenAt >= totalRegenMs(entry.activity.level)) {
+          next.delete(date);
+          restoredKeys.push(entry.key);
+        }
+      }
+
+      if (restoredKeys.length === 0) return;
+
+      devouredCellsRef.current = next;
+      setDevouredCells(next);
+
+      const occupied = new Set(
+        snakeRef.current.map((s) => cellKey(s.col, s.row))
+      );
+      setFood((foodPrev) => {
+        const foodNext = new Set(foodPrev);
+        for (const key of restoredKeys) {
+          if (!occupied.has(key)) foodNext.add(key);
+        }
+        foodRef.current = foodNext;
+        return foodNext;
+      });
+    }, REGEN_TICK_MS);
+
+    return () => window.clearInterval(id);
+  }, []);
 
   const onKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -470,7 +607,7 @@ export function SnakeCalendar({
   return (
     <div
       ref={containerRef}
-      className="relative inline-block cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-2"
+      className={`relative cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-2 ${fitToWidth ? "w-full max-w-full overflow-hidden" : "inline-block w-max max-w-full"}`}
       tabIndex={0}
       role="application"
       aria-label="Snake game on contribution calendar. Use arrow keys or WASD."
@@ -485,10 +622,10 @@ export function SnakeCalendar({
         data={calendarData}
         loading={false}
         colorScheme="light"
-        blockSize={blockSize}
+        blockSize={fittedBlockSize}
         blockMargin={blockMargin}
         blockRadius={blockRadius}
-        fontSize={fontSize}
+        fontSize={fittedFontSize}
         showTotalCount={showTotalCount}
         showColorLegend={showColorLegend}
         showMonthLabels={showMonthLabels}
@@ -499,24 +636,41 @@ export function SnakeCalendar({
       />
 
       <svg
-        className="pointer-events-none absolute left-0 top-0 z-5 overflow-visible"
+        className="pointer-events-none absolute left-0 top-[2px] z-10 overflow-hidden"
         width={dimensions.width}
         height={dimensions.height}
         viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
         aria-hidden
       >
+        {regeneratingOverlays.map((cell) => {
+          const x = cell.col * (fittedBlockSize + blockMargin);
+          const y = labelHeight + cell.row * (fittedBlockSize + blockMargin);
+          return (
+            <rect
+              key={`regen-${cell.key}`}
+              x={x}
+              y={y}
+              width={fittedBlockSize}
+              height={fittedBlockSize}
+              rx={blockRadius}
+              ry={blockRadius}
+              fill={cell.fill}
+              opacity={cell.opacity}
+            />
+          );
+        })}
         {snake.map((seg, i) => {
-          const x = seg.col * (blockSize + blockMargin);
+          const x = seg.col * (fittedBlockSize + blockMargin);
           const y =
-            labelHeight + seg.row * (blockSize + blockMargin);
+            labelHeight + seg.row * (fittedBlockSize + blockMargin);
           const isHead = i === 0;
           return (
             <rect
               key={`${seg.col}-${seg.row}-${i}`}
               x={x}
               y={y}
-              width={blockSize}
-              height={blockSize}
+              width={fittedBlockSize}
+              height={fittedBlockSize}
               rx={blockRadius}
               ry={blockRadius}
               fill={SNAKE_FILL}

@@ -349,7 +349,7 @@ export default function App() {
 
         <hr className="border-[#eeeeee] mb-10" />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-center mb-10 sm:mb-14">
+        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto] gap-6 sm:gap-8 items-start mb-10 sm:mb-14">
           <div className="space-y-4 sm:space-y-6 max-w-xl">
             {isMobile ? (
               <motion.h1
@@ -410,7 +410,7 @@ export default function App() {
               <p>Engineering Intern @ Evertz</p>
             </div>
           </div>
-          <div className="w-full min-w-0 flex justify-start md:justify-end items-center">
+          <div className="w-full min-w-0 md:min-w-fit flex justify-start md:justify-end">
             <a
               href="https://github.com/CHUNKYBOI666"
               target="_blank"
@@ -420,9 +420,10 @@ export default function App() {
             >
               <SnakeCalendar
                 username="CHUNKYBOI666"
-                blockSize={isMobile ? 8 : 12}
-                blockMargin={isMobile ? 3 : 6}
-                fontSize={isMobile ? 10 : 14}
+                fitToWidth={isMobile}
+                blockSize={isMobile ? 10 : 10}
+                blockMargin={isMobile ? 3 : 4}
+                fontSize={isMobile ? 10 : 12}
                 showMonthLabels={!isMobile}
                 blockRadius={0}
                 showTotalCount={false}

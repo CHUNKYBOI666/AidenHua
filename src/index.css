@@ -23,6 +23,16 @@
   }
 }
 
-.snake-calendar > .react-activity-calendar__scroll-container {
-  overflow: hidden !important;
+@media (max-width: 767px) {
+  .snake-calendar > .react-activity-calendar__scroll-container {
+    overflow: hidden !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .snake-calendar > .react-activity-calendar__scroll-container {
+    overflow: visible !important;
+    max-width: none !important;
+  }
 }
