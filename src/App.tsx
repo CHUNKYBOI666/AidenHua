@@ -1,7 +1,14 @@
 import { Analytics } from "@vercel/analytics/react";
 import { motion, useInView, AnimatePresence } from "motion/react";
 import { Mail, Linkedin, Github, ArrowUpRight, X, Eye } from "lucide-react";
-import { Fragment, useRef, useState, useCallback, useEffect } from "react";
+import {
+  Fragment,
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  useSyncExternalStore,
+} from "react";
 import { SnakeCalendar } from "@/components/SnakeCalendar";
 import epsteinProjectMedia from "@/assets/RagEpsteinDemo.mp4";
 import baconheadThumbnail from "@/assets/baconheadDemo.gif";
@@ -49,6 +56,18 @@ const projects = [
 
 type Project = (typeof projects)[0];
 
+function useMediaQuery(query: string): boolean {
+  return useSyncExternalStore(
+    (onStoreChange) => {
+      const mq = window.matchMedia(query);
+      mq.addEventListener("change", onStoreChange);
+      return () => mq.removeEventListener("change", onStoreChange);
+    },
+    () => window.matchMedia(query).matches,
+    () => false,
+  );
+}
+
 function ProjectPreviewOverlay({
   project,
   onClose,
@@ -61,8 +80,13 @@ function ProjectPreviewOverlay({
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, [project, onClose]);
 
   return (
@@ -74,7 +98,7 @@ function ProjectPreviewOverlay({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.22, ease: [0.25, 1, 0.5, 1] }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/72 px-6 py-10"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/72 px-4 py-6 sm:px-6 sm:py-10"
           onClick={(e) => {
             e.stopPropagation();
             onClose();
@@ -85,19 +109,22 @@ function ProjectPreviewOverlay({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.28, ease: [0.25, 1, 0.5, 1] }}
-            className="relative w-full max-w-[min(900px,78vw)]"
+            className="relative w-full max-w-[min(900px,94vw)] sm:max-w-[min(900px,78vw)]"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
               onClick={onClose}
-              className="absolute -top-9 right-0 text-white/50 hover:text-white transition-colors duration-200"
+              className="absolute -top-10 right-0 p-2 -m-2 text-white/50 hover:text-white transition-colors duration-200 sm:-top-9 sm:p-0 sm:m-0"
               aria-label="Close preview"
             >
               <X size={18} strokeWidth={1.25} />
             </button>
 
-            <div className="overflow-hidden bg-[#0a0a0a]" style={{ aspectRatio: "16/10" }}>
+            <div
+              className="overflow-hidden bg-[#0a0a0a]"
+              style={{ aspectRatio: "16/10" }}
+            >
               {project.media === "video" ? (
                 <video
                   src={project.thumbnail}
@@ -143,31 +170,45 @@ function ProjectRow({
       ref={ref}
       initial={{ opacity: 0, y: 20 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1], delay: index * 0.07 }}
+      transition={{
+        duration: 0.5,
+        ease: [0.25, 0.1, 0.25, 1],
+        delay: index * 0.07,
+      }}
     >
-      <div className="group flex items-start justify-between gap-6 py-4 cursor-default">
+      <div className="group flex flex-col gap-3 py-4 cursor-default sm:flex-row sm:items-start sm:justify-between sm:gap-6">
         {/* Left: number + title + description */}
-        <div className="flex items-start gap-4 min-w-0">
+        <div className="flex items-start gap-3 min-w-0 sm:gap-4">
           <span className="shrink-0 text-[9.5px] font-medium tracking-[0.2em] text-[#cccccc] uppercase tabular-nums mt-0.5">
             {project.id}
           </span>
-          <div className="min-w-0">
-            <div className="flex items-baseline gap-2.5 flex-wrap">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-baseline justify-between gap-2 sm:justify-start sm:gap-2.5 flex-wrap">
               <span className="text-[13px] font-semibold tracking-tight text-black transition-colors duration-150">
                 {project.title}
               </span>
-              <span className="text-[9.5px] font-medium tracking-[0.15em] text-[#bbbbbb] uppercase">
+              <span className="text-[9.5px] font-medium tracking-[0.15em] text-[#bbbbbb] uppercase shrink-0">
                 {project.category}&ensp;·&ensp;{project.year}
               </span>
             </div>
-            <p className="mt-1 text-[11.5px] text-[#777777] leading-relaxed max-w-md">
+            <p className="mt-1 text-[11.5px] text-[#777777] leading-relaxed sm:max-w-md">
               {project.description}
             </p>
+            <div className="flex flex-wrap gap-1.5 mt-2.5 md:hidden">
+              {project.tech.map((t) => (
+                <span
+                  key={t}
+                  className="text-[9.5px] tracking-wide text-[#999999] border border-[#e8e8e8] px-1.5 py-0.5 rounded-[2px]"
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Right: tags + arrow */}
-        <div className="flex items-start gap-3 shrink-0 pt-0.5">
+        {/* Right: tags + actions */}
+        <div className="flex items-center gap-1 shrink-0 self-end sm:items-start sm:gap-3 sm:self-auto sm:pt-0.5">
           <div className="hidden md:flex flex-wrap gap-1.5 justify-end max-w-[180px]">
             {project.tech.map((t) => (
               <span
@@ -181,19 +222,19 @@ function ProjectRow({
           <button
             type="button"
             onClick={() => onOpen(project)}
-            className="text-[#cccccc] hover:text-black transition-colors duration-200"
+            className="p-2.5 -m-1 text-[#cccccc] hover:text-black transition-colors duration-200 touch-manipulation"
             aria-label={`Preview ${project.title}`}
           >
-            <Eye size={13} strokeWidth={1.5} />
+            <Eye size={14} strokeWidth={1.5} />
           </button>
           <a
             href={project.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#cccccc] hover:text-black transition-colors duration-200"
+            className="p-2.5 -m-1 text-[#cccccc] hover:text-black transition-colors duration-200 touch-manipulation"
             aria-label={`View ${project.title} on GitHub`}
           >
-            <ArrowUpRight size={13} />
+            <ArrowUpRight size={14} strokeWidth={1.5} />
           </a>
         </div>
       </div>
@@ -202,14 +243,12 @@ function ProjectRow({
   );
 }
 
-export default function App() {
-  const backgroundOpacities = [0.06, 0.08, 0.12, 0.16, 0.22, 0.28];
-  const [backgroundOpacityIndex, setBackgroundOpacityIndex] = useState(1);
-  const [previewProject, setPreviewProject] = useState<Project | null>(null);
+/** Profile photo background opacity — 0 (hidden) to 1 (fully visible) */
+const BACKGROUND_OPACITY = 0.09;
 
-  const handlePageClick = () => {
-    setBackgroundOpacityIndex((prev) => (prev + 1) % backgroundOpacities.length);
-  };
+export default function App() {
+  const isMobile = useMediaQuery("(max-width: 767px)");
+  const [previewProject, setPreviewProject] = useState<Project | null>(null);
 
   const handleOpenPreview = useCallback((p: Project) => {
     setPreviewProject(p);
@@ -225,7 +264,6 @@ export default function App() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
       className="relative isolate min-h-screen text-[#1a1a1a] selection:bg-black selection:text-white"
-      onClick={handlePageClick}
     >
       <div
         aria-hidden
@@ -235,27 +273,48 @@ export default function App() {
           backgroundSize: "cover",
           backgroundPosition: "center 69%",
           backgroundRepeat: "no-repeat",
-          opacity: backgroundOpacities[backgroundOpacityIndex],
+          opacity: BACKGROUND_OPACITY,
           filter: "grayscale(100%) contrast(110%)",
         }}
       />
 
-      <ProjectPreviewOverlay project={previewProject} onClose={handleClosePreview} />
+      <ProjectPreviewOverlay
+        project={previewProject}
+        onClose={handleClosePreview}
+      />
 
-      <div className="relative z-10 max-w-[900px] mx-auto px-6 py-12 md:py-20">
-        <header className="mb-3 flex items-center justify-between">
+      <div className="relative z-10 max-w-[900px] mx-auto px-4 py-10 sm:px-6 sm:py-12 md:py-20">
+        <header className="mb-3 flex items-center justify-between gap-4">
           <nav className="text-[11px] font-medium text-[#666666] tracking-tight">
-            <span className="hover:text-black cursor-pointer transition-colors">home</span>
+            <span className="hover:text-black cursor-pointer transition-colors">
+              home
+            </span>
             <span className="mx-2">/</span>
           </nav>
-          <div className="flex items-center gap-5 text-[#666666]">
-            <a href="mailto:aidenhua2007@gmail.com" className="hover:text-black transition-colors" aria-label="Email Aiden Hua">
+          <div className="flex items-center gap-1 text-[#666666] sm:gap-5">
+            <a
+              href="mailto:aidenhua2007@gmail.com"
+              className="p-2 hover:text-black transition-colors touch-manipulation"
+              aria-label="Email Aiden Hua"
+            >
               <Mail size={16} />
             </a>
-            <a href="https://www.linkedin.com/in/aiden-hua-660952294" className="hover:text-black transition-colors" target="_blank" rel="noopener noreferrer" aria-label="Aiden Hua on LinkedIn">
+            <a
+              href="https://www.linkedin.com/in/aiden-hua-660952294"
+              className="p-2 hover:text-black transition-colors touch-manipulation"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Aiden Hua on LinkedIn"
+            >
               <Linkedin size={16} />
             </a>
-            <a href="https://github.com/CHUNKYBOI666" className="hover:text-black transition-colors" target="_blank" rel="noopener noreferrer" aria-label="Aiden Hua on GitHub">
+            <a
+              href="https://github.com/CHUNKYBOI666"
+              className="p-2 hover:text-black transition-colors touch-manipulation"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Aiden Hua on GitHub"
+            >
               <Github size={16} />
             </a>
           </div>
@@ -263,10 +322,10 @@ export default function App() {
 
         <hr className="border-[#eeeeee] mb-10" />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-14">
-          <div className="space-y-6 max-w-xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-center mb-10 sm:mb-14">
+          <div className="space-y-4 sm:space-y-6 max-w-xl">
             <motion.h1
-              className="relative text-xl font-medium tracking-tight text-gray-800 cursor-default w-fit"
+              className="relative text-lg sm:text-xl font-medium tracking-tight text-gray-800 cursor-default w-fit"
               initial="initial"
               whileHover="hover"
             >
@@ -296,18 +355,36 @@ export default function App() {
               <p>Engineering Intern @ Evertz</p>
             </div>
           </div>
-          <div className="w-full overflow-hidden flex justify-end items-center">
-            <a href="https://github.com/CHUNKYBOI666" target="_blank" rel="noopener noreferrer" className="block w-max opacity-80 hover:opacity-100 transition-opacity duration-300" aria-label="View GitHub Contributions">
+          <div className="w-full min-w-0 flex justify-start md:justify-end items-center">
+            <a
+              href="https://github.com/CHUNKYBOI666"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full max-w-full md:w-max opacity-80 hover:opacity-100 transition-opacity duration-300"
+              aria-label="View GitHub Contributions"
+            >
               <SnakeCalendar
                 username="CHUNKYBOI666"
-                blockSize={12}
-                blockMargin={6}
+                blockSize={isMobile ? 8 : 12}
+                blockMargin={isMobile ? 3 : 6}
+                fontSize={isMobile ? 10 : 14}
+                showMonthLabels={!isMobile}
                 blockRadius={0}
                 showTotalCount={false}
                 showColorLegend={false}
-                theme={{ light: ["#eeeeee", "#767676", "#676767", "#4d4d4d", "#1a1a1a"] }}
+                theme={{
+                  light: [
+                    "#eeeeee",
+                    "#767676",
+                    "#676767",
+                    "#4d4d4d",
+                    "#1a1a1a",
+                  ],
+                }}
                 transformData={(contributions) =>
-                  contributions.filter((day) => new Date(day.date) >= new Date("2025-11-01"))
+                  contributions.filter(
+                    (day) => new Date(day.date) >= new Date("2025-11-01"),
+                  )
                 }
               />
             </a>
@@ -318,8 +395,12 @@ export default function App() {
 
         <section className="mb-16">
           <div className="flex items-baseline justify-between mb-2">
-            <h2 className="text-[10px] font-bold tracking-[0.25em] text-black uppercase opacity-60">Projects</h2>
-            <span className="text-[10px] text-[#aaaaaa] tracking-wide">{projects.length} total</span>
+            <h2 className="text-[10px] font-bold tracking-[0.25em] text-black uppercase opacity-60">
+              Projects
+            </h2>
+            <span className="text-[10px] text-[#aaaaaa] tracking-wide">
+              {projects.length} total
+            </span>
           </div>
           <hr className="border-[#eeeeee]" />
           <div>
