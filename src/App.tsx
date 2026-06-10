@@ -99,9 +99,11 @@ function ProjectPreviewOverlay({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.22, ease: [0.25, 1, 0.5, 1] }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/72 px-4 py-6 sm:px-6 sm:py-10"
-          onClick={(e) => {
-            e.stopPropagation();
-            onClose();
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${project.title} preview`}
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) onClose();
           }}
         >
           <motion.div
@@ -109,22 +111,24 @@ function ProjectPreviewOverlay({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.28, ease: [0.25, 1, 0.5, 1] }}
-            className="relative w-full max-w-[min(900px,94vw)] sm:max-w-[min(900px,78vw)]"
-            onClick={(e) => e.stopPropagation()}
+            className="relative w-[min(100%,520px)] sm:w-full sm:max-w-[min(900px,78vw)]"
+            onMouseDown={(e) => e.stopPropagation()}
           >
-            <button
-              type="button"
-              onClick={onClose}
-              className="absolute -top-10 right-0 p-2 -m-2 text-white/50 hover:text-white transition-colors duration-200 sm:-top-9 sm:p-0 sm:m-0"
-              aria-label="Close preview"
-            >
-              <X size={18} strokeWidth={1.25} />
-            </button>
-
             <div
-              className="overflow-hidden bg-[#0a0a0a]"
+              className="relative overflow-hidden bg-[#0a0a0a]"
               style={{ aspectRatio: "16/10" }}
             >
+              <button
+                type="button"
+                onMouseDown={(e) => {
+                  e.stopPropagation();
+                  onClose();
+                }}
+                className="absolute top-2 right-2 z-10 p-2 text-white/70 hover:text-white transition-colors duration-200 touch-manipulation"
+                aria-label="Close preview"
+              >
+                <X size={18} strokeWidth={1.25} />
+              </button>
               {project.media === "video" ? (
                 <video
                   src={project.thumbnail}
@@ -324,32 +328,39 @@ export default function App() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-center mb-10 sm:mb-14">
           <div className="space-y-4 sm:space-y-6 max-w-xl">
-            <motion.h1
-              className="relative text-lg sm:text-xl font-medium tracking-tight text-gray-800 cursor-default w-fit"
-              initial="initial"
-              whileHover="hover"
-            >
-              <motion.span
-                variants={{
-                  initial: { opacity: 1, y: 0, filter: "blur(0px)" },
-                  hover: { opacity: 0, y: -8, filter: "blur(4px)" },
-                }}
-                transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-                className="inline-block"
+            {isMobile ? (
+              <h1 className="text-lg font-medium tracking-tight text-gray-800">
+                <span className="block">Aiden Hua</span>
+                <span className="block text-black mt-0.5">华一诺</span>
+              </h1>
+            ) : (
+              <motion.h1
+                className="relative text-xl font-medium tracking-tight text-gray-800 cursor-default w-fit"
+                initial="initial"
+                whileHover="hover"
               >
-                Aiden Hua
-              </motion.span>
-              <motion.span
-                variants={{
-                  initial: { opacity: 0, y: 8, filter: "blur(4px)" },
-                  hover: { opacity: 1, y: 0, filter: "blur(0px)" },
-                }}
-                transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-                className="absolute left-0 top-0 inline-block text-black"
-              >
-                华一诺
-              </motion.span>
-            </motion.h1>
+                <motion.span
+                  variants={{
+                    initial: { opacity: 1, y: 0, filter: "blur(0px)" },
+                    hover: { opacity: 0, y: -8, filter: "blur(4px)" },
+                  }}
+                  transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+                  className="inline-block"
+                >
+                  Aiden Hua
+                </motion.span>
+                <motion.span
+                  variants={{
+                    initial: { opacity: 0, y: 8, filter: "blur(4px)" },
+                    hover: { opacity: 1, y: 0, filter: "blur(0px)" },
+                  }}
+                  transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+                  className="absolute left-0 top-0 inline-block text-black"
+                >
+                  华一诺
+                </motion.span>
+              </motion.h1>
+            )}
             <div className="space-y-0.5 text-[13px] text-[#666666] leading-relaxed">
               <p>cs @McGill</p>
               <p>Engineering Intern @ Evertz</p>
