@@ -1,7 +1,7 @@
 import { Analytics } from "@vercel/analytics/react";
 import { motion, useInView, AnimatePresence } from "motion/react";
-import { Mail, Linkedin, Github, ArrowUpRight } from "lucide-react";
-import { Fragment, useRef, useState, useCallback } from "react";
+import { Mail, Linkedin, Github, ArrowUpRight, X, Eye } from "lucide-react";
+import { Fragment, useRef, useState, useCallback, useEffect } from "react";
 import { SnakeCalendar } from "@/components/SnakeCalendar";
 import epsteinProjectMedia from "@/assets/RagEpsteinDemo.mp4";
 import baconheadThumbnail from "@/assets/baconheadDemo.gif";
@@ -49,58 +49,77 @@ const projects = [
 
 type Project = (typeof projects)[0];
 
-function HoverPreview({
+function ProjectPreviewOverlay({
   project,
-  pos,
+  onClose,
 }: {
   project: Project | null;
-  pos: { x: number; y: number };
+  onClose: () => void;
 }) {
-  const PREVIEW_W = 290;
-  const OFFSET_X = 28;
-  const OFFSET_Y = -110;
-
-  const left =
-    pos.x + OFFSET_X + PREVIEW_W > window.innerWidth - 12
-      ? pos.x - OFFSET_X - PREVIEW_W
-      : pos.x + OFFSET_X;
-  const top = Math.max(12, pos.y + OFFSET_Y);
+  useEffect(() => {
+    if (!project) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [project, onClose]);
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       {project && (
         <motion.div
           key={project.id}
-          initial={{ opacity: 0, scale: 0.96, y: 6 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.96, y: 6 }}
-          transition={{ duration: 0.18, ease: [0.25, 1, 0.5, 1] }}
-          className="fixed z-50 pointer-events-none overflow-hidden rounded-[2px] bg-white border border-[#e0e0e0] shadow-[0_12px_48px_rgba(0,0,0,0.13)]"
-          style={{ left, top, width: PREVIEW_W }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.22, ease: [0.25, 1, 0.5, 1] }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/72 px-6 py-10"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
         >
-          <div className="w-full overflow-hidden bg-[#f2f2f2]" style={{ aspectRatio: "16/10" }}>
-            {project.media === "video" ? (
-              <video
-                src={project.thumbnail}
-                className="w-full h-full object-cover"
-                muted
-                loop
-                playsInline
-                autoPlay
-              />
-            ) : (
-              <img
-                src={project.thumbnail}
-                alt={project.title}
-                className="w-full h-full object-cover"
-              />
-            )}
-          </div>
-          <div className="px-3.5 py-3">
-            <p className="text-[11.5px] font-semibold tracking-tight text-black leading-snug">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.28, ease: [0.25, 1, 0.5, 1] }}
+            className="relative w-full max-w-[min(900px,78vw)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={onClose}
+              className="absolute -top-9 right-0 text-white/50 hover:text-white transition-colors duration-200"
+              aria-label="Close preview"
+            >
+              <X size={18} strokeWidth={1.25} />
+            </button>
+
+            <div className="overflow-hidden bg-[#0a0a0a]" style={{ aspectRatio: "16/10" }}>
+              {project.media === "video" ? (
+                <video
+                  src={project.thumbnail}
+                  className="w-full h-full object-cover"
+                  muted
+                  loop
+                  playsInline
+                  autoPlay
+                />
+              ) : (
+                <img
+                  src={project.thumbnail}
+                  alt={project.title}
+                  className="w-full h-full object-cover"
+                />
+              )}
+            </div>
+
+            <p className="mt-4 text-[13px] font-light tracking-tight text-white/90">
               {project.title}
             </p>
-          </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
@@ -110,15 +129,11 @@ function HoverPreview({
 function ProjectRow({
   project,
   index,
-  onMouseEnter,
-  onMouseLeave,
-  onMouseMove,
+  onOpen,
 }: {
   project: Project;
   index: number;
-  onMouseEnter: (p: Project) => void;
-  onMouseLeave: () => void;
-  onMouseMove: (e: React.MouseEvent) => void;
+  onOpen: (p: Project) => void;
 }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px 0px" });
@@ -130,12 +145,7 @@ function ProjectRow({
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1], delay: index * 0.07 }}
     >
-      <div
-        className="group flex items-start justify-between gap-6 py-4 cursor-default"
-        onMouseEnter={() => onMouseEnter(project)}
-        onMouseLeave={onMouseLeave}
-        onMouseMove={onMouseMove}
-      >
+      <div className="group flex items-start justify-between gap-6 py-4 cursor-default">
         {/* Left: number + title + description */}
         <div className="flex items-start gap-4 min-w-0">
           <span className="shrink-0 text-[9.5px] font-medium tracking-[0.2em] text-[#cccccc] uppercase tabular-nums mt-0.5">
@@ -168,6 +178,14 @@ function ProjectRow({
               </span>
             ))}
           </div>
+          <button
+            type="button"
+            onClick={() => onOpen(project)}
+            className="text-[#cccccc] hover:text-black transition-colors duration-200"
+            aria-label={`Preview ${project.title}`}
+          >
+            <Eye size={13} strokeWidth={1.5} />
+          </button>
           <a
             href={project.link}
             target="_blank"
@@ -187,23 +205,18 @@ function ProjectRow({
 export default function App() {
   const backgroundOpacities = [0.06, 0.08, 0.12, 0.16, 0.22, 0.28];
   const [backgroundOpacityIndex, setBackgroundOpacityIndex] = useState(1);
-  const [hoveredProject, setHoveredProject] = useState<Project | null>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [previewProject, setPreviewProject] = useState<Project | null>(null);
 
   const handlePageClick = () => {
     setBackgroundOpacityIndex((prev) => (prev + 1) % backgroundOpacities.length);
   };
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    setMousePos({ x: e.clientX, y: e.clientY });
+  const handleOpenPreview = useCallback((p: Project) => {
+    setPreviewProject(p);
   }, []);
 
-  const handleMouseEnter = useCallback((p: Project) => {
-    setHoveredProject(p);
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setHoveredProject(null);
+  const handleClosePreview = useCallback(() => {
+    setPreviewProject(null);
   }, []);
 
   return (
@@ -227,7 +240,7 @@ export default function App() {
         }}
       />
 
-      <HoverPreview project={hoveredProject} pos={mousePos} />
+      <ProjectPreviewOverlay project={previewProject} onClose={handleClosePreview} />
 
       <div className="relative z-10 max-w-[900px] mx-auto px-6 py-12 md:py-20">
         <header className="mb-3 flex items-center justify-between">
@@ -315,9 +328,7 @@ export default function App() {
                 <ProjectRow
                   project={project}
                   index={i}
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                  onMouseMove={handleMouseMove}
+                  onOpen={handleOpenPreview}
                 />
               </Fragment>
             ))}
