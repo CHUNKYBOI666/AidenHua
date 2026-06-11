@@ -562,7 +562,7 @@ export function SnakeCalendar({
 
   if (fetchError) {
     return (
-      <div className="text-[13px] text-red-600 max-w-[280px]">
+      <div className="text-[12px] text-red-600 max-w-[280px]">
         {fetchError}
       </div>
     );
@@ -598,7 +598,7 @@ export function SnakeCalendar({
     !gridMeta
   ) {
     return (
-      <div className="text-[13px] text-[#888888] max-w-[280px]">
+      <div className="text-[12px] text-[#888888] max-w-[280px]">
         No contribution days in this range to play on.
       </div>
     );

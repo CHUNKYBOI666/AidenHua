@@ -23,7 +23,6 @@ const projects = [
     year: "Feb 2026",
     description:
       "RAG for 20k+ document corpus of the Epstein File. Include Q&A with Citations, entity search function, and relationship Graphs between entities. Allows open any cited document to see full DOJ text files.",
-    tech: ["FastAPI", "React", "Supabase", "Vite"],
     thumbnail: epsteinProjectMedia,
     media: "video" as const,
     link: "https://github.com/CHUNKYBOI666/RAGforEpsteinFiles",
@@ -35,7 +34,6 @@ const projects = [
     year: "Mar 2026",
     description:
       "Explores vision model which trains a bot that watches gameplay, learn game states and takes over to play the game. Tests and ran on simple roblox obbies.",
-    tech: ["PyTorch", "ViT", "DPO", "Roblox"],
     thumbnail: baconheadThumbnail,
     media: "image" as const,
     link: "https://github.com/ibrahimansr/baconhead",
@@ -47,7 +45,6 @@ const projects = [
     year: "Mar 2026",
     description:
       "Semantic file search for macOS via Raycast. Describe what you're looking for in plain English and EasyFinder returns the most relevant images, PDFs, Office docs, and Markdown files from your machine.",
-    tech: ["Raycast", "FastAPI", "LanceDB", "LaunchAgents"],
     thumbnail: easyFinderThumbnail,
     media: "image" as const,
     link: "https://github.com/CHUNKYBOI666/EasyFinder",
@@ -66,28 +63,6 @@ function useMediaQuery(query: string): boolean {
     () => window.matchMedia(query).matches,
     () => false,
   );
-}
-
-function useIsScrolling(debounceMs = 150): boolean {
-  const [isScrolling, setIsScrolling] = useState(false);
-
-  useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-
-    const onScroll = () => {
-      setIsScrolling(true);
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => setIsScrolling(false), debounceMs);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      clearTimeout(timeoutId);
-    };
-  }, [debounceMs]);
-
-  return isScrolling;
 }
 
 function ProjectPreviewOverlay({
@@ -169,7 +144,7 @@ function ProjectPreviewOverlay({
               )}
             </div>
 
-            <p className="mt-4 text-[15px] font-light tracking-tight text-white/90">
+            <p className="mt-4 text-[14px] font-light tracking-tight text-white/90">
               {project.title}
             </p>
           </motion.div>
@@ -202,46 +177,25 @@ function ProjectRow({
         delay: index * 0.07,
       }}
     >
-      <div className="group flex flex-col gap-3 py-4 cursor-default sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+      <div className="flex flex-col gap-3 py-4 cursor-default sm:flex-row sm:items-start sm:justify-between sm:gap-6">
         {/* Left: title + description */}
         <div className="flex items-start gap-3 min-w-0 sm:gap-4">
           <div className="min-w-0 flex-1">
             <div className="flex items-baseline justify-between gap-2 sm:justify-start sm:gap-2.5 flex-wrap">
-              <span className="text-[15px] font-semibold tracking-tight text-black transition-colors duration-150">
+              <span className="text-[14px] tracking-tight text-black transition-colors duration-150">
                 {project.title}
               </span>
-              <span className="text-[11.5px] font-medium tracking-[0.15em] text-[#bbbbbb] uppercase shrink-0">
+              <span className="text-[10.5px] font-medium tracking-[0.15em] text-[#bbbbbb] uppercase shrink-0">
                 {project.year}
               </span>
             </div>
-            <p className="mt-1 text-[13.5px] text-[#777777] leading-relaxed sm:max-w-md">
+            <p className="mt-1 text-[12.5px] text-[#777777] leading-relaxed sm:max-w-md">
               {project.description}
             </p>
-            <div className="flex flex-wrap gap-1.5 mt-2.5 md:hidden">
-              {project.tech.map((t) => (
-                <span
-                  key={t}
-                  className="text-[11.5px] tracking-wide text-[#999999] border border-[#e8e8e8] px-1.5 py-0.5 rounded-[2px]"
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
 
-        {/* Right: tags + actions */}
         <div className="flex items-center gap-1 shrink-0 self-end sm:items-start sm:gap-3 sm:self-auto sm:pt-0.5">
-          <div className="hidden md:flex flex-wrap gap-1.5 justify-end max-w-[180px]">
-            {project.tech.map((t) => (
-              <span
-                key={t}
-                className="text-[11.5px] tracking-wide text-[#999999] border border-[#e8e8e8] px-1.5 py-0.5 rounded-[2px] group-hover:border-[#d8d8d8] transition-colors duration-150"
-              >
-                {t}
-              </span>
-            ))}
-          </div>
           <button
             type="button"
             onClick={() => onOpen(project)}
@@ -271,8 +225,13 @@ const BACKGROUND_OPACITY = 0.09;
 
 export default function App() {
   const isMobile = useMediaQuery("(max-width: 767px)");
-  const isScrolling = useIsScrolling();
+  const canHover = useMediaQuery("(hover: hover) and (pointer: fine)");
   const [previewProject, setPreviewProject] = useState<Project | null>(null);
+  const [nameToggled, setNameToggled] = useState(false);
+
+  const toggleName = useCallback(() => {
+    setNameToggled((t) => !t);
+  }, []);
 
   const handleOpenPreview = useCallback((p: Project) => {
     setPreviewProject(p);
@@ -309,7 +268,7 @@ export default function App() {
 
       <div className="relative z-10 max-w-[900px] mx-auto px-4 py-10 sm:px-6 sm:py-12 md:py-20">
         <header className="mb-3 flex items-center justify-between gap-4">
-          <nav className="text-[13px] font-medium text-[#666666] tracking-tight">
+          <nav className="text-[12px] font-medium text-[#666666] tracking-tight">
             <span className="hover:text-black cursor-pointer transition-colors">
               home
             </span>
@@ -348,61 +307,58 @@ export default function App() {
 
         <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto] gap-6 sm:gap-8 items-start mb-10 sm:mb-14">
           <div className="space-y-4 sm:space-y-6 max-w-xl">
-            {isMobile ? (
-              <motion.h1
-                className="relative text-xl font-medium tracking-tight text-gray-800 w-fit"
-                animate={isScrolling ? "hover" : "initial"}
+            <motion.h1
+              role={canHover ? undefined : "button"}
+              tabIndex={canHover ? undefined : 0}
+              aria-label={
+                canHover
+                  ? undefined
+                  : nameToggled
+                    ? "Show Aiden Hua"
+                    : "Show Chinese name 华一诺"
+              }
+              className={`relative text-xl sm:text-2xl font-normal tracking-tight text-gray-800 w-fit ${
+                canHover
+                  ? "cursor-default"
+                  : "cursor-pointer touch-manipulation select-none"
+              }`}
+              initial="initial"
+              animate={!canHover && nameToggled ? "hover" : "initial"}
+              whileHover={canHover ? "hover" : undefined}
+              onClick={canHover ? undefined : toggleName}
+              onKeyDown={
+                canHover
+                  ? undefined
+                  : (e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        toggleName();
+                      }
+                    }
+              }
+            >
+              <motion.span
+                variants={{
+                  initial: { opacity: 1, y: 0, filter: "blur(0px)" },
+                  hover: { opacity: 0, y: -8, filter: "blur(4px)" },
+                }}
+                transition={{ duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
+                className="inline-block"
               >
-                <motion.span
-                  variants={{
-                    initial: { opacity: 1, y: 0, filter: "blur(0px)" },
-                    hover: { opacity: 0, y: -8, filter: "blur(4px)" },
-                  }}
-                  transition={{ duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
-                  className="inline-block"
-                >
-                  Aiden Hua
-                </motion.span>
-                <motion.span
-                  variants={{
-                    initial: { opacity: 0, y: 8, filter: "blur(4px)" },
-                    hover: { opacity: 1, y: 0, filter: "blur(0px)" },
-                  }}
-                  transition={{ duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
-                  className="absolute left-0 top-0 inline-block text-black"
-                >
-                  华一诺
-                </motion.span>
-              </motion.h1>
-            ) : (
-              <motion.h1
-                className="relative text-2xl font-medium tracking-tight text-gray-800 cursor-default w-fit"
-                initial="initial"
-                whileHover="hover"
+                Aiden Hua
+              </motion.span>
+              <motion.span
+                variants={{
+                  initial: { opacity: 0, y: 8, filter: "blur(4px)" },
+                  hover: { opacity: 1, y: 0, filter: "blur(0px)" },
+                }}
+                transition={{ duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
+                className="absolute left-0 top-0 inline-block text-black"
               >
-                <motion.span
-                  variants={{
-                    initial: { opacity: 1, y: 0, filter: "blur(0px)" },
-                    hover: { opacity: 0, y: -8, filter: "blur(4px)" },
-                  }}
-                  transition={{ duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
-                  className="inline-block"
-                >
-                  Aiden Hua
-                </motion.span>
-                <motion.span
-                  variants={{
-                    initial: { opacity: 0, y: 8, filter: "blur(4px)" },
-                    hover: { opacity: 1, y: 0, filter: "blur(0px)" },
-                  }}
-                  transition={{ duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
-                  className="absolute left-0 top-0 inline-block text-black"
-                >
-                  华一诺
-                </motion.span>
-              </motion.h1>
-            )}
-            <div className="space-y-0.5 text-[15px] text-[#666666] leading-relaxed">
+                华一诺
+              </motion.span>
+            </motion.h1>
+            <div className="space-y-0.5 text-[14px] text-[#666666] leading-relaxed">
               <p>cs @McGill</p>
               <p>Engineering Intern @ Evertz</p>
             </div>
@@ -420,7 +376,7 @@ export default function App() {
                 fitToWidth={isMobile}
                 blockSize={isMobile ? 10 : 10}
                 blockMargin={isMobile ? 3 : 4}
-                fontSize={isMobile ? 12 : 14}
+                fontSize={isMobile ? 11 : 13}
                 showMonthLabels={!isMobile}
                 blockRadius={0}
                 showTotalCount={false}
@@ -446,11 +402,11 @@ export default function App() {
 
         <section className="mb-16">
           <div className="flex items-center gap-4 mb-0">
-            <h2 className="text-[12px] font-bold tracking-[0.25em] text-black uppercase opacity-60 shrink-0">
+            <h2 className="text-[11px] font-bold tracking-[0.25em] text-black uppercase opacity-60 shrink-0">
               Projects
             </h2>
             <div className="flex-1 border-t border-[#e2e2e2]" />
-            <span className="text-[12px] text-[#aaaaaa] tracking-wide shrink-0">
+            <span className="text-[11px] text-[#aaaaaa] tracking-wide shrink-0">
               {projects.length} total
             </span>
           </div>
