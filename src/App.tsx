@@ -373,6 +373,7 @@ export default function App() {
             >
               <SnakeCalendar
                 username="CHUNKYBOI666"
+                enableSnake={!isMobile}
                 fitToWidth={isMobile}
                 blockSize={isMobile ? 10 : 10}
                 blockMargin={isMobile ? 3 : 4}

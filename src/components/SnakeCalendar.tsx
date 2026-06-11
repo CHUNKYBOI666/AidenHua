@@ -139,6 +139,8 @@ export type SnakeCalendarProps = {
   transformData?: (contributions: Activity[]) => Activity[];
   /** Shrink blocks to fit container width (use on narrow/mobile layouts). */
   fitToWidth?: boolean;
+  /** When false, show the contribution graph only (no snake overlay or game loop). */
+  enableSnake?: boolean;
 };
 
 export function SnakeCalendar({
@@ -156,6 +158,7 @@ export function SnakeCalendar({
   },
   transformData: transformFn,
   fitToWidth = false,
+  enableSnake = true,
 }: SnakeCalendarProps) {
   const weekStart: Day = 0;
 
@@ -345,6 +348,13 @@ export function SnakeCalendar({
   }, [username, year]);
 
   useEffect(() => {
+    if (!enableSnake) {
+      setSnake([]);
+      setFood(new Set());
+      setDevouredCells(new Map());
+      return;
+    }
+
     if (!gridMeta || !contributions?.length) {
       setSnake([]);
       setFood(new Set());
@@ -394,7 +404,7 @@ export function SnakeCalendar({
     setDevouredCells(new Map());
     directionRef.current = { dc: 1, dr: 0 };
     pendingDirRef.current = null;
-  }, [gridMeta, contributions]);
+  }, [enableSnake, gridMeta, contributions]);
 
   const snakeRef = useRef(snake);
   const foodRef = useRef(food);
@@ -410,7 +420,7 @@ export function SnakeCalendar({
   }, [devouredCells]);
 
   useEffect(() => {
-    if (!gridMeta) return;
+    if (!enableSnake || !gridMeta) return;
 
     const tick = () => {
       const meta = gridMeta;
@@ -476,9 +486,11 @@ export function SnakeCalendar({
 
     const id = window.setInterval(tick, TICK_MS);
     return () => window.clearInterval(id);
-  }, [gridMeta]);
+  }, [enableSnake, gridMeta]);
 
   useEffect(() => {
+    if (!enableSnake) return;
+
     const id = window.setInterval(() => {
       const now = Date.now();
       setRegenTick((t) => t + 1);
@@ -515,7 +527,7 @@ export function SnakeCalendar({
     }, REGEN_TICK_MS);
 
     return () => window.clearInterval(id);
-  }, []);
+  }, [enableSnake]);
 
   const onKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -599,7 +611,44 @@ export function SnakeCalendar({
   ) {
     return (
       <div className="text-[12px] text-[#888888] max-w-[280px]">
-        No contribution days in this range to play on.
+        {enableSnake
+          ? "No contribution days in this range to play on."
+          : "No contributions in this range."}
+      </div>
+    );
+  }
+
+  const calendarProps = {
+    className: "snake-calendar",
+    loading: false as const,
+    colorScheme: "light" as const,
+    blockSize: fittedBlockSize,
+    blockMargin,
+    blockRadius,
+    fontSize: fittedFontSize,
+    showTotalCount,
+    showColorLegend,
+    showMonthLabels,
+    theme,
+    labels,
+    maxLevel: 4,
+    weekStart,
+  };
+
+  if (!enableSnake) {
+    return (
+      <div
+        ref={containerRef}
+        className={
+          fitToWidth
+            ? "w-full max-w-full overflow-hidden"
+            : "inline-block w-max max-w-full"
+        }
+      >
+        <ActivityCalendar
+          {...calendarProps}
+          data={contributions}
+        />
       </div>
     );
   }
@@ -618,21 +667,8 @@ export function SnakeCalendar({
       }}
     >
       <ActivityCalendar
-        className="snake-calendar"
+        {...calendarProps}
         data={calendarData}
-        loading={false}
-        colorScheme="light"
-        blockSize={fittedBlockSize}
-        blockMargin={blockMargin}
-        blockRadius={blockRadius}
-        fontSize={fittedFontSize}
-        showTotalCount={showTotalCount}
-        showColorLegend={showColorLegend}
-        showMonthLabels={showMonthLabels}
-        theme={theme}
-        labels={labels}
-        maxLevel={4}
-        weekStart={weekStart}
       />
 
       <svg
