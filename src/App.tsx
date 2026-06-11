@@ -20,7 +20,7 @@ const projects = [
     id: "01",
     title: "RAG for Epstein File",
     category: "Systems · Backend",
-    year: "2025",
+    year: "Feb 2026",
     description:
       "RAG for 20k+ document corpus of the Epstein File. Include Q&A with Citations, entity search function, and relationship Graphs between entities. Allows open any cited document to see full DOJ text files.",
     tech: ["FastAPI", "React", "Supabase", "Vite"],
@@ -32,7 +32,7 @@ const projects = [
     id: "02",
     title: "Baconhead",
     category: "Full-Stack · Web",
-    year: "2024",
+    year: "Mar 2026",
     description:
       "Explores vision model which trains a bot that watches gameplay, learn game states and takes over to play the game. Tests and ran on simple roblox obbies.",
     tech: ["PyTorch", "ViT", "DPO", "Roblox"],
@@ -44,7 +44,7 @@ const projects = [
     id: "03",
     title: "EasyFinder",
     category: "Creative Tool · Web",
-    year: "2024",
+    year: "Mar 2026",
     description:
       "Semantic file search for macOS via Raycast. Describe what you're looking for in plain English and EasyFinder returns the most relevant images, PDFs, Office docs, and Markdown files from your machine.",
     tech: ["Raycast", "FastAPI", "LanceDB", "LaunchAgents"],
@@ -169,7 +169,7 @@ function ProjectPreviewOverlay({
               )}
             </div>
 
-            <p className="mt-4 text-[13px] font-light tracking-tight text-white/90">
+            <p className="mt-4 text-[15px] font-light tracking-tight text-white/90">
               {project.title}
             </p>
           </motion.div>
@@ -203,28 +203,25 @@ function ProjectRow({
       }}
     >
       <div className="group flex flex-col gap-3 py-4 cursor-default sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-        {/* Left: number + title + description */}
+        {/* Left: title + description */}
         <div className="flex items-start gap-3 min-w-0 sm:gap-4">
-          <span className="shrink-0 text-[9.5px] font-medium tracking-[0.2em] text-[#cccccc] uppercase tabular-nums mt-0.5">
-            {project.id}
-          </span>
           <div className="min-w-0 flex-1">
             <div className="flex items-baseline justify-between gap-2 sm:justify-start sm:gap-2.5 flex-wrap">
-              <span className="text-[13px] font-semibold tracking-tight text-black transition-colors duration-150">
+              <span className="text-[15px] font-semibold tracking-tight text-black transition-colors duration-150">
                 {project.title}
               </span>
-              <span className="text-[9.5px] font-medium tracking-[0.15em] text-[#bbbbbb] uppercase shrink-0">
-                {project.category}&ensp;·&ensp;{project.year}
+              <span className="text-[11.5px] font-medium tracking-[0.15em] text-[#bbbbbb] uppercase shrink-0">
+                {project.year}
               </span>
             </div>
-            <p className="mt-1 text-[11.5px] text-[#777777] leading-relaxed sm:max-w-md">
+            <p className="mt-1 text-[13.5px] text-[#777777] leading-relaxed sm:max-w-md">
               {project.description}
             </p>
             <div className="flex flex-wrap gap-1.5 mt-2.5 md:hidden">
               {project.tech.map((t) => (
                 <span
                   key={t}
-                  className="text-[9.5px] tracking-wide text-[#999999] border border-[#e8e8e8] px-1.5 py-0.5 rounded-[2px]"
+                  className="text-[11.5px] tracking-wide text-[#999999] border border-[#e8e8e8] px-1.5 py-0.5 rounded-[2px]"
                 >
                   {t}
                 </span>
@@ -239,7 +236,7 @@ function ProjectRow({
             {project.tech.map((t) => (
               <span
                 key={t}
-                className="text-[9.5px] tracking-wide text-[#999999] border border-[#e8e8e8] px-1.5 py-0.5 rounded-[2px] group-hover:border-[#d8d8d8] transition-colors duration-150"
+                className="text-[11.5px] tracking-wide text-[#999999] border border-[#e8e8e8] px-1.5 py-0.5 rounded-[2px] group-hover:border-[#d8d8d8] transition-colors duration-150"
               >
                 {t}
               </span>
@@ -264,7 +261,7 @@ function ProjectRow({
           </a>
         </div>
       </div>
-      <hr className="border-[#eeeeee]" />
+      <div className="w-4 border-t border-[#c8c8c8]" />
     </motion.div>
   );
 }
@@ -312,7 +309,7 @@ export default function App() {
 
       <div className="relative z-10 max-w-[900px] mx-auto px-4 py-10 sm:px-6 sm:py-12 md:py-20">
         <header className="mb-3 flex items-center justify-between gap-4">
-          <nav className="text-[11px] font-medium text-[#666666] tracking-tight">
+          <nav className="text-[13px] font-medium text-[#666666] tracking-tight">
             <span className="hover:text-black cursor-pointer transition-colors">
               home
             </span>
@@ -347,13 +344,13 @@ export default function App() {
           </div>
         </header>
 
-        <hr className="border-[#eeeeee] mb-10" />
+        <hr className="border-[#e2e2e2] mb-10" />
 
         <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto] gap-6 sm:gap-8 items-start mb-10 sm:mb-14">
           <div className="space-y-4 sm:space-y-6 max-w-xl">
             {isMobile ? (
               <motion.h1
-                className="relative text-lg font-medium tracking-tight text-gray-800 w-fit"
+                className="relative text-xl font-medium tracking-tight text-gray-800 w-fit"
                 animate={isScrolling ? "hover" : "initial"}
               >
                 <motion.span
@@ -379,7 +376,7 @@ export default function App() {
               </motion.h1>
             ) : (
               <motion.h1
-                className="relative text-xl font-medium tracking-tight text-gray-800 cursor-default w-fit"
+                className="relative text-2xl font-medium tracking-tight text-gray-800 cursor-default w-fit"
                 initial="initial"
                 whileHover="hover"
               >
@@ -405,7 +402,7 @@ export default function App() {
                 </motion.span>
               </motion.h1>
             )}
-            <div className="space-y-0.5 text-[13px] text-[#666666] leading-relaxed">
+            <div className="space-y-0.5 text-[15px] text-[#666666] leading-relaxed">
               <p>cs @McGill</p>
               <p>Engineering Intern @ Evertz</p>
             </div>
@@ -423,7 +420,7 @@ export default function App() {
                 fitToWidth={isMobile}
                 blockSize={isMobile ? 10 : 10}
                 blockMargin={isMobile ? 3 : 4}
-                fontSize={isMobile ? 10 : 12}
+                fontSize={isMobile ? 12 : 14}
                 showMonthLabels={!isMobile}
                 blockRadius={0}
                 showTotalCount={false}
@@ -447,18 +444,16 @@ export default function App() {
           </div>
         </div>
 
-        <hr className="border-[#eeeeee] mb-10" />
-
         <section className="mb-16">
-          <div className="flex items-baseline justify-between mb-2">
-            <h2 className="text-[10px] font-bold tracking-[0.25em] text-black uppercase opacity-60">
+          <div className="flex items-center gap-4 mb-0">
+            <h2 className="text-[12px] font-bold tracking-[0.25em] text-black uppercase opacity-60 shrink-0">
               Projects
             </h2>
-            <span className="text-[10px] text-[#aaaaaa] tracking-wide">
+            <div className="flex-1 border-t border-[#e2e2e2]" />
+            <span className="text-[12px] text-[#aaaaaa] tracking-wide shrink-0">
               {projects.length} total
             </span>
           </div>
-          <hr className="border-[#eeeeee]" />
           <div>
             {projects.map((project, i) => (
               <Fragment key={project.id}>
@@ -472,7 +467,7 @@ export default function App() {
           </div>
         </section>
 
-        <hr className="border-[#eeeeee] mb-6" />
+        <hr className="border-[#e2e2e2] mb-6" />
       </div>
       <Analytics />
     </motion.div>
