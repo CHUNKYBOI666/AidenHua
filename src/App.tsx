@@ -353,7 +353,7 @@ export default function App() {
                   hover: { opacity: 1, y: 0, filter: "blur(0px)" },
                 }}
                 transition={{ duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
-                className="absolute left-0 top-0 inline-block text-black"
+                className="absolute left-0 top-0 inline-block font-wenkai text-black"
               >
                 华一诺
               </motion.span>
@@ -423,8 +423,8 @@ export default function App() {
 
         <section className="mb-16">
           <div className="flex items-center gap-4 mb-0">
-            <h2 className="text-[11px] font-bold tracking-[0.25em] text-black uppercase opacity-60 shrink-0">
-              Projects
+            <h2 className="text-[11px] font-bold tracking-[0.25em] text-black opacity-60 shrink-0">
+              Things I built
             </h2>
             <div className="flex-1 border-t border-[#e2e2e2]" />
             <span className="text-[11px] text-[#aaaaaa] tracking-wide shrink-0">
