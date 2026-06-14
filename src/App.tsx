@@ -359,8 +359,28 @@ export default function App() {
               </motion.span>
             </motion.h1>
             <div className="space-y-0.5 text-[14px] text-[#666666] leading-relaxed">
-              <p>cs @McGill</p>
-              <p>Engineering Intern @ Evertz</p>
+              <p>
+                cs @
+                <a
+                  href="https://www.mcgill.ca/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline"
+                >
+                  McGill
+                </a>
+              </p>
+              <p>
+                AI Engineering Intern @
+                <a
+                  href="https://evertz.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline"
+                >
+                  Evertz
+                </a>
+              </p>
             </div>
           </div>
           <div className="w-full min-w-0 md:min-w-fit flex justify-start md:justify-end">

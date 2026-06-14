@@ -25,6 +25,21 @@
   }
 }
 
+@layer components {
+  .link-underline {
+    @apply relative inline text-inherit no-underline hover:text-black;
+  }
+
+  .link-underline::after {
+    content: "";
+    @apply absolute left-0 bottom-0 h-px w-full bg-current origin-left scale-x-0 transition-transform duration-300 ease-out;
+  }
+
+  .link-underline:hover::after {
+    @apply scale-x-100;
+  }
+}
+
 @media (max-width: 767px) {
   .snake-calendar > .react-activity-calendar__scroll-container {
     overflow: hidden !important;
