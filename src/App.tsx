@@ -18,11 +18,11 @@ import profilePhoto from "@/assets/IMG_4586.JPG";
 const projects = [
   {
     id: "01",
-    title: "RAG for Epstein File",
+    title: "RAG for Government Corpus",
     category: "Systems · Backend",
     year: "Feb 2026",
     description:
-      "RAG for 20k+ document corpus of the Epstein File. Include Q&A with Citations, entity search function, and relationship Graphs between entities. Allows open any cited document to see full DOJ text files.",
+      "RAG for a 20,000+ document U.S. government corpus, specifically the Epstein Files. Includes cited Q&A, entity search, and relationship graphs, with direct access to the full text of cited DOJ documents.",
     thumbnail: epsteinProjectMedia,
     media: "video" as const,
     link: "https://github.com/CHUNKYBOI666/RAGforEpsteinFiles",
